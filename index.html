@@ -1,0 +1,140 @@
+<html>
+    <head>
+        
+        <style>
+            body
+            {
+                --background-color: #f5f5f5;
+                background-color: var(--background-color);
+                display: flex;
+            }
+            .mouse-container
+            {
+                display: inline-grid;
+                margin: 0 auto;
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+            }
+            [data-lighting]
+            {
+                --lighting-color: red;
+                background-color: var(--lighting-color);
+                grid-column: 1;
+                grid-row: 1;
+
+                --webkit-mask-url: '';
+                -webkit-mask-image: var(--webkit-mask-url);
+                -webkit-mask-repeat: no-repeat;
+            }
+            [data-render]
+            {
+                grid-column: 1;
+                grid-row: 1;
+                z-index:10;
+            }
+
+            img[src=""]
+            {
+                display:none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mouse-container">
+            <div data-lighting></div>
+            <img data-render src="" alt="device render" />
+        </div>
+        <div class="controls">
+            <label data-field data-render>
+                <div data-label>Render Image</div>
+                <div data-value><input type="file" accept="image/*" /></div>
+            </label>
+            <label data-field data-mask>
+                <div data-label>Mask Image</div>
+                <div data-value><input type="file" accept="image/*" /></div>
+            </label>
+            <label data-field data-lighting>
+                <div data-label>Lighting Color</div>
+                <div data-value><input type="color" value="#FF0000" /></div>
+                <div><button type="button" data-reset>Reset Lighting Color</button></div>
+            </label>
+            <label data-field data-background>
+                <div data-label>Background Color</div>
+                <div data-value><input type="color" value="#F5F5F5" /></div>
+                <div><button type="button" data-reset>Reset Background Color</button></div>
+            </label>
+        </div>
+        <script>
+            const $lighting = document.querySelector('[data-lighting]');
+            const $renderImage = document.querySelector('[data-render]');
+
+            const $renderImageField = document.querySelector('[data-field][data-render]');
+            $renderImageField.$value = $renderImageField.querySelector('input');
+
+            const $maskImageField = document.querySelector('[data-field][data-mask]');
+            $maskImageField.$value = $maskImageField.querySelector('input');
+
+            $renderImageField.$value.addEventListener('change', imageRender_onChange);
+            $maskImageField.$value.addEventListener('change', imageMask_onChange);
+
+            function imageRender_onChange(event)
+            {
+                if ($renderImageField.$value.files && $renderImageField.$value.files[0])
+                {
+                    const fileReader = new FileReader();
+                    fileReader.onload = (e) =>
+                    {
+                        $renderImage.src = e.target.result;
+                    }
+                    fileReader.readAsDataURL($renderImageField.$value.files[0]);
+                }
+            }
+            function imageMask_onChange(event)
+            {
+                if ($maskImageField.$value.files && $maskImageField.$value.files[0])
+                {
+                    const fileReader = new FileReader();
+                    fileReader.onload = (e) =>
+                    {
+                        $lighting.style.setProperty('--webkit-mask-url', `url(${e.target.result})`);
+                    }
+                    fileReader.readAsDataURL($maskImageField.$value.files[0]);
+                }
+            }
+
+            const $lightingColorField = document.querySelector('[data-field][data-lighting]');
+            $lightingColorField.$value = $lightingColorField.querySelector('input');
+            $lightingColorField.$reset = $lightingColorField.querySelector('[data-reset]');
+
+            const $backgroundColorField = document.querySelector('[data-field][data-background]');
+            $backgroundColorField.$value = $backgroundColorField.querySelector('input');
+            $backgroundColorField.$reset = $backgroundColorField.querySelector('[data-reset]');
+
+            $lightingColorField.$value.addEventListener('input', lighting_onInput);
+            $lightingColorField.$reset.addEventListener('click', lighting_reset_onClick);
+
+            function lighting_onInput(event)
+            {
+                $lighting.style.setProperty('--lighting-color', `${$lightingColorField.$value.value}`);
+            }
+            function lighting_reset_onClick(event)
+            {
+                $lightingColorField.$value.value = '#FF0000';
+                $lighting.style.setProperty('--lighting-color', `'#FF0000`);
+            }
+
+            $backgroundColorField.$value.addEventListener('input', background_onInput);
+            $backgroundColorField.$reset.addEventListener('click', background_reset_onClick);
+
+            function background_onInput(event)
+            {
+                document.body.style.setProperty('--background-color', `${$backgroundColorField.$value.value}`);
+            }
+            function background_reset_onClick(event)
+            {
+                $backgroundColorField.$value.value = '#F5F5F5';
+                document.body.style.setProperty('--lighting-color', `#F5F5F5`);
+            }
+        </script>
+    </body>
+</html>
