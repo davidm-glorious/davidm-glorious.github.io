@@ -56,12 +56,10 @@
             <label data-field data-lighting>
                 <div data-label>Lighting Color</div>
                 <div data-value><input type="color" value="#FF0000" /></div>
-                <div><button type="button" data-reset>Reset Lighting Color</button></div>
             </label>
             <label data-field data-background>
                 <div data-label>Background Color</div>
                 <div data-value><input type="color" value="#F5F5F5" /></div>
-                <div><button type="button" data-reset>Reset Background Color</button></div>
             </label>
         </div>
         <script>
@@ -111,29 +109,17 @@
             $backgroundColorField.$reset = $backgroundColorField.querySelector('[data-reset]');
 
             $lightingColorField.$value.addEventListener('input', lighting_onInput);
-            $lightingColorField.$reset.addEventListener('click', lighting_reset_onClick);
 
             function lighting_onInput(event)
             {
                 $lighting.style.setProperty('--lighting-color', `${$lightingColorField.$value.value}`);
             }
-            function lighting_reset_onClick(event)
-            {
-                $lightingColorField.$value.value = '#FF0000';
-                $lighting.style.setProperty('--lighting-color', `'#FF0000`);
-            }
 
             $backgroundColorField.$value.addEventListener('input', background_onInput);
-            $backgroundColorField.$reset.addEventListener('click', background_reset_onClick);
 
             function background_onInput(event)
             {
                 document.body.style.setProperty('--background-color', `${$backgroundColorField.$value.value}`);
-            }
-            function background_reset_onClick(event)
-            {
-                $backgroundColorField.$value.value = '#F5F5F5';
-                document.body.style.setProperty('--lighting-color', `#F5F5F5`);
             }
         </script>
     </body>
